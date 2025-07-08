@@ -1,15 +1,14 @@
+import json
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 
 from .models import User
 
-
 def index(request):
     return render(request, "network/index.html")
-
 
 def login_view(request):
     if request.method == "POST":
@@ -29,12 +28,10 @@ def login_view(request):
             })
     else:
         return render(request, "network/login.html")
-
-
+    
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse("index"))
-
 
 def register(request):
     if request.method == "POST":
@@ -61,3 +58,10 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+
+def posts(request, type):
+    if type == "feed":
+        pass
+    
+    if type == "following":
+        pass
