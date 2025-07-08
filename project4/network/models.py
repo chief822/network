@@ -16,10 +16,9 @@ class User(AbstractUser):
     
 
 class Posts(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="post")
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
     text = models.TextField()
     imageURL = models.URLField(blank=True)
-    timestamp = models.DateTimeField()
     posted_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
     likers = models.ManyToManyField(User, related_name="liked_posts", blank=True)
@@ -32,7 +31,8 @@ class Posts(models.Model):
             "author": self.author.username,
             "text": self.text,
             "imageURL": self.image_url,
-            "timestamp": self.timestamp.strftime("%b %d %Y, %I:%M %p"),
+            "posted_on": self.posted_on.strftime("%b %d %Y, %I:%M %p"),
+            "updated_on": self.updated_on.strftime("%b %d %Y, %I:%M %p"),
             "likers_count": self.likers.count(),
             "liked_by_viewer": (viewer is not None and self.likers.filter(pk=viewer.pk).exists())
         }
