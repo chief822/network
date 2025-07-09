@@ -30,7 +30,7 @@ class TestAPIs(TestCase):
         self.assertEqual(self.brian.followers_count(), 2)
         self.assertEqual(self.brian.following_count(), 0)
         self.assertEqual(self.david.following_count(), 1)
-        self.assertEqual(self.alex.following_count(), 0)
+        self.assertEqual(self.alex.followers_count(), 0)
         self.assertTrue(models.User.objects.filter(username="brian", followers=self.david).exists())
 
     def test_post_serialize_with_viewer(self):
@@ -38,7 +38,7 @@ class TestAPIs(TestCase):
 
         self.assertEqual(data["author"], "brian")
         self.assertEqual(data["text"], "Hello world!")
-        self.assertEqual(data["imageURL"], self.post.image_url)
+        self.assertEqual(data["imageURL"], self.post.imageURL)
         self.assertEqual(data["likers_count"], 1)
         self.assertTrue(data["liked_by_viewer"])
 

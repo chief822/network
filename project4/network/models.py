@@ -30,7 +30,7 @@ class Posts(models.Model):
             "id": self.id,
             "author": self.author.username,
             "text": self.text,
-            "imageURL": self.image_url,
+            "imageURL": self.imageURL,
             "posted_on": self.posted_on.strftime("%b %d %Y, %I:%M %p"),
             "updated_on": self.updated_on.strftime("%b %d %Y, %I:%M %p"),
             "likers_count": self.likers.count(),
