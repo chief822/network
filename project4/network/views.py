@@ -74,7 +74,7 @@ def posts(request, type):
     else:
         return JsonResponse({"error": "invalid posts type"}, status=400)
     
-    posts = posts.order_by("-timestamp").all()
+    posts = posts.order_by("-posted_on").all()
     return JsonResponse([post.serialize(viewer=request.user) for post in posts], safe=False)
 
 @csrf_exempt
