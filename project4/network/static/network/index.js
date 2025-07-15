@@ -14,8 +14,9 @@ function send_post(event) {
   return false;
 }
 
-function load_posts(type) {
+function load_posts(type, page_number=1) {
   document.querySelector('#profile-view').style.display = 'none';
+  document.querySelector('#pag-view').style.display = 'block';
   document.querySelector('#posts-view').style.display = 'block';
   document.querySelector('#posts-view').innerHTML = ''
   document.querySelector('#compose-view').style.display = 'block';
@@ -27,10 +28,13 @@ function load_posts(type) {
   else if (type === 'feed') {
     document.querySelector('#header').innerHTML = 'All Posts';
   }
-  fetch(`posts/${type}`)
+  fetch(`posts/${type}?page=${page_number}`)
   .then(response => response.json())
-  .then(posts => {
-    posts.forEach(post => {
+  .then(data => {
+    if (page_number < 1 || page_number > data.max) {
+      document.querySelector('#posts-view').innerHTML == "Invalid page number"
+    }
+    data.posts.forEach(post => {
       let imageURL = ''
       if (post.imageURL) {
         imageURL = `<img src="${post.imageURL}">`
@@ -54,5 +58,40 @@ function load_posts(type) {
         <hr>
         `
     });
+    
+    // render paginator
+    let pag_bar = document.querySelector('#pagination-list');
+    pag_bar.innerHTML = ""
+    if (page_number !== 1) {
+      pag_bar.innerHTML +=
+      `
+      <li class="page-item" onclick="load_posts('${type}', ${page_number-1})">
+        <a class="page-link" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+      `
+    }
+    let start = page_number;
+    if (page_number === 1) {
+      start = 2;
+    }
+    for (let i = start-1; i <= Math.min(start - 1 + 3, data.max); ++i) {
+      pag_bar.innerHTML += 
+      `
+      <li class="page-item" onclick="load_posts('${type}', ${i})"><a class="page-link" aria-label="Previous">${i}</a></li>
+      `
+    }
+    if (page_number !== data.max && data.max !== 1) {
+      pag_bar.innerHTML +=
+      `
+      <li class="page-item" onclick="load_posts('${type}', ${page_number+1})">
+        <a class="page-link" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+      `
+    }
+    console.log(`${page_number}, ${data.max}, ${start}`)
   })
 }

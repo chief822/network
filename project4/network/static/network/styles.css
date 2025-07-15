@@ -37,12 +37,13 @@ body {
 }
 .post {
     display: flex;
+    background-color: lightsalmon;
     margin-left: 1em;
     margin-right: 1em;
     border-radius: 1em;
     border: 1.5px rgb(121, 30, 163) solid;
-    box-shadow: 0 0 0 2px rgb(255, 156, 75),
-                0 0 5px 3px rgb(255, 156, 75); 
+    box-shadow: 0 0 0 2px gray,
+                0 0 5px 3px gray; 
     justify-content: space-between;
     padding: 1em;
 }
@@ -94,5 +95,9 @@ img {
     outline: auto;
 }
 u {
-    color: rgb(252, 128, 57);
+    color: chocolate;
+}
+#pagination-list {
+    display: flex;
+    justify-content: center;
 }

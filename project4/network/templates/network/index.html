@@ -2,26 +2,33 @@
 {% load static %}
 
 {% block body %}
-    {% if user.is_authenticated %}
-    <h1 id="header">All Posts</h1>
-    <hr>
-    <div id="compose-view">
-        <form id="compose-post">
-            <div class="mb-3">
-                <textarea placeholder="What's happening?" id="text" class="form-control" type="text" rows="3"></textarea>
-            </div>
-            <div class="form-group">
-                <input id="imageurl" class="form-control" type="url" placeholder="Enter full image URL(optional)">
-            </div>
-            <button class="btn btn-success" type="submit">Post</button>
-        </form>
-    </div>
-    <hr>
-    {% endif %}
-    <div id="posts-view">
-    </div>
-    <div id="profile-view">
-    </div>
+{% if user.is_authenticated %}
+<h1 id="header">All Posts</h1>
+<hr>
+<div id="compose-view">
+    <form id="compose-post">
+        <div class="mb-3">
+            <textarea placeholder="What's happening?" id="text" class="form-control" type="text" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+            <input id="imageurl" class="form-control" type="url" placeholder="Enter full image URL(optional)">
+        </div>
+        <button class="btn btn-success" type="submit">Post</button>
+    </form>
+</div>
+<hr>
+{% endif %}
+<div id="posts-view">
+</div>
+<div id="profile-view">
+</div>
+<div id="pag-view">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination" id="pagination-list">           
+        </ul>
+    </nav>
+</div>
 {% endblock %}
 
-{% block script %} <script src="{% static 'network/index.js' %}"></script> {% endblock %}
+{% block script %}
+<script src="{% static 'network/index.js' %}"></script> {% endblock %}

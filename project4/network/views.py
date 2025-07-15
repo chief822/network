@@ -6,9 +6,10 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
-import re
+from django.core.paginator import Paginator
 from . import models
 from .models import User
+import re
 
 def index(request):
     return render(request, "network/index.html")
@@ -75,7 +76,15 @@ def posts(request, type):
         return JsonResponse({"error": "invalid posts type"}, status=400)
     
     posts = posts.order_by("-posted_on").all()
-    return JsonResponse([post.serialize(viewer=request.user) for post in posts], safe=False)
+    pages = Paginator(posts, 1)
+    page_number = request.GET.get('page')
+    page = pages.get_page(page_number)
+    posts = [post.serialize(viewer=request.user) for post in page]
+    data = {
+        "posts": posts,
+        "max": pages.num_pages
+    }
+    return JsonResponse(data)
 
 @csrf_exempt
 @login_required
