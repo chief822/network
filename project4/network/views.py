@@ -7,9 +7,9 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
+from django.core.exceptions import ObjectDoesNotExist
 from . import models
 from .models import User
-import re
 
 def index(request):
     return render(request, "network/index.html")
@@ -72,6 +72,13 @@ def posts(request, type):
         user = request.user
         following = user.following.all()
         posts = models.Posts.objects.filter(author__in=following)
+    elif type == "profile":
+        id = request.GET.get("id", 0) # 0  cuz no user can have id with 0
+        try:
+            profile = models.User.objects.get(id=id)
+        except User.DoesNotExist:
+            return JsonResponse({"error": "user doesnt exist", "id": id}, status=400)
+        posts = profile.posts.all()
     else:
         return JsonResponse({"error": "invalid posts type"}, status=400)
     
@@ -92,10 +99,9 @@ def new_post(request):
     if request.method != "POST":
         return JsonResponse({"error": "POST request required."}, status=400)
     data = json.loads(request.body)
-    imageURL = data.get("imageurl")
-    if not is_valid_image_url(imageURL):
-        imageURL = None
-    post = models.Posts(author=request.user, text=data.get("text"), imageURL=imageURL)
+    if not data.get("text"):
+        return JsonResponse({"error": "Enter some text."}, status=400)
+    post = models.Posts(author=request.user, text=data.get("text"))
     post.save()
     return JsonResponse({"message": "Posted successfully."}, status=201)
 
@@ -110,10 +116,6 @@ def post(request, id):
         if request.user != post.author:
             return JsonResponse({"error": "You are not the author of this post."}, status=403)
         post.text = data.get("text")
-        imageURL = data.get("imageurl")
-        if not is_valid_image_url(imageURL):
-            imageURL = None
-        post.imageURL = imageURL
         post.save()
         return JsonResponse({"message": "Post edited successfully."}, status=201)
     elif request.method == "PUT":
@@ -140,8 +142,8 @@ def profile_page(request, id):
     if request.method == "GET":
         return JsonResponse({
             "name": profile.username,
-            "followers": profile.followers_count,
-            "following": profile.following_count
+            "followers": profile.followers_count(),
+            "following": profile.following_count()
         })
     elif request.method == "PUT":
         if request.user == profile:
@@ -160,16 +162,3 @@ def profile_page(request, id):
         return JsonResponse({
             "error": "GET or PUT request required."
         }, status=400)
-
-def is_valid_image_url(url):
-    """
-    Validates if a given string is a valid image URL using regex.
-    """
-    # Regex to match a URL ending with common image extensions
-    # It accounts for optional 'www.', various domain characters, path,
-    # and common image file extensions (case-insensitive).
-    image_url_pattern = re.compile(
-        r"^(https?://)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&/=]*)\.(jpg|jpeg|png|gif|bmp)$",
-        re.IGNORECASE
-    )
-    return bool(image_url_pattern.match(url))

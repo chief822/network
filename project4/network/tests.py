@@ -16,8 +16,7 @@ class TestAPIs(TestCase):
         # Create post
         self.post = models.Posts.objects.create(
             author=self.brian,
-            text="Hello world!",
-            imageURL="https://example.com/image.jpg"
+            text="Hello world!"
         )
 
         # Add david as a liker
@@ -38,7 +37,6 @@ class TestAPIs(TestCase):
 
         self.assertEqual(data["author"], "brian")
         self.assertEqual(data["text"], "Hello world!")
-        self.assertEqual(data["imageURL"], self.post.imageURL)
         self.assertEqual(data["likers_count"], 1)
         self.assertTrue(data["liked_by_viewer"])
 
