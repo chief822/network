@@ -11,6 +11,10 @@
     <script src="{% static 'network/index.js' %}"></script>
     <script>
         const isLoggedIn = {{ request.user.is_authenticated|yesno:'true,false' }};
+        let userSignedIn = ""
+        if (isLoggedIn) {
+            userSignedIn = Number("{{ request.user.id }}")
+        }
     </script>
 </head>
 

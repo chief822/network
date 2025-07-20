@@ -61,6 +61,7 @@ body {
     justify-content: space-between;
 }
 .heart {
+    cursor: pointer;
     display: inline-block;
     height: 17px;
     width: 17px;
@@ -135,4 +136,15 @@ u > a {
 }
 .big {
     font-size: 72px;
+}
+
+.heart.red,
+.heart.red::before,
+.heart.red::after {
+    background-color: red;
+    border-color: red;
+}
+
+.btn-warning {
+    max-width: 100px;
 }

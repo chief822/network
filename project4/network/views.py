@@ -83,7 +83,7 @@ def posts(request, type):
         return JsonResponse({"error": "invalid posts type"}, status=400)
     
     posts = posts.order_by("-posted_on").all()
-    pages = Paginator(posts, 1)
+    pages = Paginator(posts, 10)
     page_number = request.GET.get('page')
     page = pages.get_page(page_number)
     posts = [post.serialize(viewer=request.user) for post in page]
@@ -106,14 +106,20 @@ def new_post(request):
     return JsonResponse({"message": "Posted successfully."}, status=201)
 
 @login_required
+@csrf_exempt
 def post(request, id):
+    print("herepost")
     try:
         post = models.Posts.objects.get(pk=id)
     except models.Posts.DoesNotExist:
         return JsonResponse({"error": "Post not found."}, status=404)
+    print("here2post")
+    print(request.body)
     data = json.loads(request.body)
+    print("herepost")
     if request.method == "POST":
-        if request.user != post.author:
+        print("in here post")
+        if request.user != post.author: # securtiy
             return JsonResponse({"error": "You are not the author of this post."}, status=403)
         post.text = data.get("text")
         post.save()
@@ -134,6 +140,7 @@ def post(request, id):
             "error": "GET or PUT request required."
         }, status=400)
 
+@csrf_exempt
 def profile_page(request, id):
     try:
         profile = models.User.objects.get(pk=id)
@@ -143,10 +150,14 @@ def profile_page(request, id):
         return JsonResponse({
             "name": profile.username,
             "followers": profile.followers_count(),
-            "following": profile.following_count()
+            "following": profile.following_count(),
+            "followed_by_user": profile.followers.filter(id=request.user.id).exists()
         })
     elif request.method == "PUT":
+        if not request.user.is_authenticated:
+            return JsonResponse({"error": "You need to log in to follow"}, status=403)
         if request.user == profile:
+            print("forbidden")
             return JsonResponse({"error": "can not follow yourself"}, status=403)
         data = json.loads(request.body)
         follow = data.get("follow")

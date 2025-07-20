@@ -5,12 +5,14 @@
 <h1 id="header">All Posts</h1>
 <hr id="header_line">
 <div id="compose-view">
+    {% if user.is_authenticated %}
     <form id="compose-post">
         <div class="mb-3">
             <textarea placeholder="What's happening?" id="text" class="form-control" type="text" rows="3"></textarea>
         </div>
-        <button class="btn btn-success" type="submit">Post</button>
+        <button class="btn btn-success" type="submit" id="post_button">Post</button>
     </form>
+    {% endif %}
 </div>
 <hr id="footer_line">
 <div id="profile-view">

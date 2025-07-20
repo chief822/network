@@ -9,9 +9,9 @@ class User(AbstractUser):
         related_name="following",
         blank=True
     )
-    def followers_count(self):
-        return self.followers.count()
     def following_count(self):
+        return self.followers.count()
+    def followers_count(self):
         return self.following.count()
     
 
